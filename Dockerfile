@@ -1,4 +1,4 @@
-FROM node:alpine as builder
+FROM node:alpine AS builder
 
 ARG MARKDOWN_CLI_VERSION="0.26.0"
 
@@ -7,7 +7,7 @@ RUN set -x \
     # `markdownlint-cli` sources: <https://github.com/igorshubovych/markdownlint-cli>
     && npm install -g --production "markdownlint-cli@${MARKDOWN_CLI_VERSION}" \
     # `ncc` sources: <https://github.com/vercel/ncc>
-    && npm install -g --production "@vercel/ncc@0.24.1"
+    && npm install -g --production "@vercel/ncc@0.38.4"
 
 # prepare "file system structure" for runtime
 RUN set -x \
@@ -15,7 +15,7 @@ RUN set -x \
 
 # pack `markdownlint-cli` into single file and put into required location
 RUN set -x \
-    && ncc build /usr/local/lib/node_modules/markdownlint-cli --minify --no-cache --out /tmp/markdownlint-cli-packed \
+    && ncc build /usr/local/lib/node_modules/markdownlint-cli --minify --no-cache -o /tmp/markdownlint-cli-packed \
     && mv /tmp/markdownlint-cli-packed/index.js /tmp/rootfs/usr/local/bin/markdownlint
 
 # copy additional image files
@@ -23,7 +23,7 @@ COPY ./docker-entrypoint.sh /tmp/rootfs/docker-entrypoint.sh
 COPY ./lint /tmp/rootfs/lint
 
 # Image hub: <https://hub.docker.com/r/mhart/alpine-node>, sources: <https://github.com/mhart/alpine-node>
-FROM mhart/alpine-node:slim as runtime
+FROM node:alpine AS runtime
 
 LABEL \
     # Docs: <https://github.com/opencontainers/image-spec/blob/master/annotations.md>
