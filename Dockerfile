@@ -1,4 +1,4 @@
-FROM node:12-alpine as builder
+FROM node:alpine as builder
 
 ARG MARKDOWN_CLI_VERSION="0.26.0"
 
@@ -23,7 +23,7 @@ COPY ./docker-entrypoint.sh /tmp/rootfs/docker-entrypoint.sh
 COPY ./lint /tmp/rootfs/lint
 
 # Image hub: <https://hub.docker.com/r/mhart/alpine-node>, sources: <https://github.com/mhart/alpine-node>
-FROM mhart/alpine-node:slim-12 as runtime
+FROM mhart/alpine-node:slim as runtime
 
 LABEL \
     # Docs: <https://github.com/opencontainers/image-spec/blob/master/annotations.md>
